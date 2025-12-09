@@ -4,21 +4,22 @@ services:
     hostname: machine-a
     container_name: machine-a
     cap_add:
-      - NET_ADMIN # Wichtig für Snort/Iptables
+      - NET_ADMIN
     networks:
       security_net:
-        ipv4_address: 172.20.0.10
+        # Wir ändern die IP passend zum neuen Subnetz unten
+        ipv4_address: 10.10.10.10
 
   machine-b:
     build: ./machine-b
     hostname: machine-b
     container_name: machine-b
     cap_add:
-      - NET_ADMIN # Wichtig für Wireshark/Iptraf
+      - NET_ADMIN
     networks:
       security_net:
-        ipv4_address: 172.20.0.20
-    # Wir mounten einen Ordner, um pcap Files einfach auf deinen PC zu bekommen
+        # Wir ändern die IP passend zum neuen Subnetz unten
+        ipv4_address: 10.10.10.20
     volumes:
       - ./captures:/captures
 
@@ -27,4 +28,5 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.20.0.0/24
+        # Hier ändern wir das Subnetz auf etwas, das sicher frei ist
+        - subnet: 10.10.10.0/24
