@@ -2,7 +2,7 @@ FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update --fix-missing && apt-get install -y \
+RUN apt-get update && apt-get install -y \
   nmap \
   tshark \
   iptraf-ng \
@@ -15,7 +15,7 @@ RUN apt-get update --fix-missing && apt-get install -y \
   inetutils-telnet \
   && rm -rf /var/lib/apt/lists/*
 
-# Wireshark (tshark) fragt normalerweise nach permissions, wir setzen das hier
+# Wireshark Rechte setzen (verhindert Dialoge und Fehler)
 RUN echo "wireshark-common wireshark-common/install-setuid boolean true" | debconf-set-selections
 RUN dpkg-reconfigure -f noninteractive wireshark-common
 
