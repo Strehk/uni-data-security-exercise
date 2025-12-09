@@ -116,7 +116,7 @@ docker exec -it machine-b-client bash
 4.  Beende tshark.
 5.  *Ziel:* Öffne das Pcap in Wireshark. Suche nach dem **Passwort** im Klartext (Filter: `ftp`) und dem **Inhalt der Textdatei** (Filter: `ftp-data`). Mache Screenshots bzw. Log-Auszüge.
 
-## Aufgabe 4: HTTPS Kommunikation
+### Aufgabe 4: HTTPS Kommunikation
 **Lernziel:** Den Unterschied zu verschlüsselter Kommunikation verstehen (TLS Handshake).
 
 1.  Starte einen Capture auf **Maschine B**.
@@ -126,7 +126,7 @@ docker exec -it machine-b-client bash
     ```
 3.  *Ziel:* Analysiere den Mitschnitt. Du wirst den Inhalt der Webseite *nicht* lesen können. Identifiziere stattdessen den **TLS Handshake** (Client Hello, Server Hello, Certificate Exchange). Mache Screenshots bzw. Log-Auszüge der relevanten Pakete.
 
-## Aufgabe 5: Reconnaissance (Port Scanning)
+### Aufgabe 5: Reconnaissance (Port Scanning)
 **Lernziel:** Herausfinden, welche Dienste und Versionen auf einem fremden Server laufen.
 
 1.  Nutze `nmap` auf **Maschine B**, um **Maschine A** zu scannen.
@@ -137,7 +137,7 @@ docker exec -it machine-b-client bash
     Dabei steht `-sV` für "Service Version Detection".
 3.  *Ziel:* Erstelle eine Liste aller offenen Ports und der dort laufenden Software-Versionen (z.B. Apache x.x.x, vsftpd x.x.x).
 
-## Aufgabe 6: Intrusion Detection (Snort Konfiguration)
+### Aufgabe 6: Intrusion Detection (Snort Konfiguration)
 **Lernziel:** Ein IDS (Intrusion Detection System) konfigurieren, um Angriffe zu erkennen.
 
 >[!IMPORTANT]
@@ -150,7 +150,7 @@ Dies ist die einzige Aufgabe, die auf **Maschine A** (Server) stattfindet!
     *   Stellen Sie sicher, dass Logs geschrieben werden.
 3.  *Ziel:* Dokumentiere die geänderten Zeilen in der `snort.conf`.
 
-## Aufgabe 7: Angriffserkennung (Blue Team)
+### Aufgabe 7: Angriffserkennung (Blue Team)
 **Lernziel:** Einen laufenden Angriff (aus Aufgabe 5) im IDS sichtbar machen.
 
 1.  Starte Snort auf **Maschine A** im Konsolen-Modus, um Alarme direkt zu sehen:
