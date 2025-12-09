@@ -1,0 +1,19 @@
+services:
+  supervisor:
+    build:
+      dockerfile: Kali.Dockerfile
+    container_name: kali_supervisor
+    command: sleep infinity
+    privileged: true
+    network_mode: host 
+
+  target:
+    build:
+      dockerfile: Target.Dockerfile
+    container_name: ubuntu_target
+    privileged: true
+    depends_on:
+      - supervisor
+    network_mode: host
+    volumes:
+      - ./php-app:/var/www/html

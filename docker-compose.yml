@@ -1,0 +1,30 @@
+services:
+  machine-a:
+    build: ./machine-a
+    hostname: machine-a
+    container_name: machine-a
+    cap_add:
+      - NET_ADMIN # Wichtig für Snort/Iptables
+    networks:
+      security_net:
+        ipv4_address: 172.20.0.10
+
+  machine-b:
+    build: ./machine-b
+    hostname: machine-b
+    container_name: machine-b
+    cap_add:
+      - NET_ADMIN # Wichtig für Wireshark/Iptraf
+    networks:
+      security_net:
+        ipv4_address: 172.20.0.20
+    # Wir mounten einen Ordner, um pcap Files einfach auf deinen PC zu bekommen
+    volumes:
+      - ./captures:/captures
+
+networks:
+  security_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
