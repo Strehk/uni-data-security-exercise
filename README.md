@@ -62,7 +62,108 @@ docker exec -it machine-b-client bash
 
 ---
 
-## Lösungsweg der Aufgaben (Docker vs. VM)
+## Aufgaben
+
+### Aufgabe 1: Traffic Sniffing (Live-Überwachung)
+**Lernziel:** Verstehen, wie Netzwerkverkehr in Echtzeit beobachtet werden kann.
+
+1.  Starte auf **Maschine B** das Tool `iptraf-ng`.
+2.  Wähle das Interface `eth0` aus (IP Traffic Monitor).
+3.  Öffne ein zweites Terminal für **Maschine B** und erzeugen Sie unverschlüsselten HTTP-Traffic zum Server:
+    ```bash
+    curl http://10.10.10.10
+    ```
+4.  Beobachten Sie im `iptraf-ng` Fenster die Pakete (Flags, Bytes, TCP-Verbindung).
+5.  *Ziel:* Erstellen Sie einen Screenshot oder Log-Auszug der Verbindung.
+
+### Aufgabe 2: HTTP Analyse mit Wireshark/Tshark
+**Lernziel:** HTTP-Anfragen im Detail analysieren und unsichere Übertragungen erkennen.
+
+1.  Starte auf **Maschine B** einen Packet-Capture im Hintergrund:
+    ```bash
+    tshark -i eth0 -w /captures/aufgabe2.pcap &
+    ```
+2.  Rufe die Webseite von Maschine A auf:
+    ```bash
+    curl http://10.10.10.10/index.php
+
+    # oder einfach
+    curl http://10.10.10.10
+    ```
+3.  Beende den Capture (wenn der Prozess im Hintergrund läuft: `killall tshark`) und öffne die Datei `captures/aufgabe2.pcap` auf deinem Host-Computer mit Wireshark.
+4.  *Ziel:* Filtere nach `http`. Finde das Paket mit dem `GET /index.php` Request und mache einen Screenshot bzw. Log-Auszug.
+
+### Aufgabe 3: FTP - Passwörter im Klartext
+**Lernziel:** Demonstrieren, warum FTP unsicher ist und wie einfach Passwörter abgefangen werden können.
+
+1.  Erstelle auf **Maschine B** eine Datei mit sensiblem Inhalt:
+    ```bash
+    echo "Das ist geheim." > a.txt
+    ```
+2.  Starte den Capture:
+    ```bash
+    tshark -i eth0 -w /captures/aufgabe3.pcap &
+    ```
+3.  Lade die Datei per FTP auf Maschine A hoch (Login: `student`, Passwort: `secret`):
+    ```bash
+    ftp -n 10.10.10.10 <<END_SCRIPT
+    quote USER student
+    quote PASS secret
+    put a.txt
+    quit
+    END_SCRIPT
+    ```
+4.  Beende tshark.
+5.  *Ziel:* Öffne das Pcap in Wireshark. Suche nach dem **Passwort** im Klartext (Filter: `ftp`) und dem **Inhalt der Textdatei** (Filter: `ftp-data`). Mache Screenshots bzw. Log-Auszüge.
+
+## Aufgabe 4: HTTPS Kommunikation
+**Lernziel:** Den Unterschied zu verschlüsselter Kommunikation verstehen (TLS Handshake).
+
+1.  Starte einen Capture auf **Maschine B**.
+2.  Rufe eine verschlüsselte externe Seite auf:
+    ```bash
+    curl -I https://www.htw-berlin.de
+    ```
+3.  *Ziel:* Analysiere den Mitschnitt. Du wirst den Inhalt der Webseite *nicht* lesen können. Identifiziere stattdessen den **TLS Handshake** (Client Hello, Server Hello, Certificate Exchange). Mache Screenshots bzw. Log-Auszüge der relevanten Pakete.
+
+## Aufgabe 5: Reconnaissance (Port Scanning)
+**Lernziel:** Herausfinden, welche Dienste und Versionen auf einem fremden Server laufen.
+
+1.  Nutze `nmap` auf **Maschine B**, um **Maschine A** zu scannen.
+2.  Versuche, offene Ports und die Versionen der Dienste zu ermitteln.
+    ```bash
+    nmap -sV 10.10.10.10
+    ```
+    Dabei steht `-sV` für "Service Version Detection".
+3.  *Ziel:* Erstelle eine Liste aller offenen Ports und der dort laufenden Software-Versionen (z.B. Apache x.x.x, vsftpd x.x.x).
+
+## Aufgabe 6: Intrusion Detection (Snort Konfiguration)
+**Lernziel:** Ein IDS (Intrusion Detection System) konfigurieren, um Angriffe zu erkennen.
+
+>[!IMPORTANT]
+Dies ist die einzige Aufgabe, die auf **Maschine A** (Server) stattfindet!
+
+1.  Öffne die Konfiguration: `nano /etc/snort/snort.conf`.
+2.  Konfiguriere Snort so, dass Portscans erkannt werden.
+    *   Suche den Abschnitt zum **Portscan-Preprocessor** (`sfportscan`).
+    *   Aktiviere (auskommentieren entfernen) und konfiguriere ihn, sodass er Scans auf dem Heimnetzwerk überwacht.
+    *   Stellen Sie sicher, dass Logs geschrieben werden.
+3.  *Ziel:* Dokumentiere die geänderten Zeilen in der `snort.conf`.
+
+## Aufgabe 7: Angriffserkennung (Blue Team)
+**Lernziel:** Einen laufenden Angriff (aus Aufgabe 5) im IDS sichtbar machen.
+
+1.  Starte Snort auf **Maschine A** im Konsolen-Modus, um Alarme direkt zu sehen:
+    ```bash
+    snort -A console -q -c /etc/snort/snort.conf -i eth0
+    ```
+2.  Wechsel zu **Maschine B** und führe erneut den Portscan aus Aufgabe 5 durch (`nmap -sV 10.10.10.10`).
+3.  Beobachte die Ausgabe auf Maschine A.
+4.  *Ziel:* Sichere den Log-Output von Snort, der zeigt, dass der Portscan erkannt wurde (z.B. Meldungen wie "TCP Portscan detected").
+
+---
+
+## Tipps und Tricks zum Lösungsweg der Aufgaben (Docker vs. VM)
 
 Da wir keine GUI haben, unterscheidet sich der Workflow minimal von der PDF-Anleitung. Hier sind die Anpassungen für jede Aufgabe:
 
@@ -90,9 +191,6 @@ Da wir keine GUI haben, unterscheidet sich der Workflow minimal von der PDF-Anle
   2. **Aktion durchführen:** (z.B. `ftp 10.10.10.10` oder Webseitenaufruf).
   3. **Aufnahme stoppen:** `killall tshark`
   4. **Auswertung:** Die Datei `aufgabe2.pcap` liegt nun automatisch in deinem Projektordner unter `captures/`. Öffne diese Datei mit Wireshark auf deinem Computer.
-
-> [!IMPORTANT]
-> Die Credentials für FTP/SSH findest du weiter unten!
 
 > [!TIP]
 > Wenn du auf Maschine B arbeitest und parallel arbeiten möchtest, dann kannst du entweder einfach ein weiteres Terminal öffnen und den `docker exec -it machine-b bash` Befehl erneut ausführen, oder du startest einen Befehl im Hintergrund mit `&` am Ende.
