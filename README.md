@@ -237,3 +237,10 @@ docker compose down
 ```
 
 (Hinweis: Aufgenommene `.pcap` Dateien im Ordner `captures/` bleiben erhalten).
+
+---
+
+## Lizenz
+![https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-sa.png](https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-sa.png)
+
+Dieses Projekt steht unter der CC BY-NC-SA 4.0 Lizenz. Siehe die [LICENSE](LICENSE) Datei für Details.
