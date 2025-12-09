@@ -1,31 +1,31 @@
 FROM ubuntu:24.04
 
+# Wir setzen die Umgebungsvariable, weil apt-get sonst interaktive Eingaben verlangt
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Pakete installieren
-RUN apt-get update && apt-get install -y \
-  apache2 \
-  php \
-  libapache2-mod-php \
-  mariadb-server \
-  postgresql \
-  vsftpd \
-  tomcat10 \
-  snort \
-  net-tools \
-  iputils-ping \
-  nano \
-  curl \
-  iptables \
-  sudo \
-  && rm -rf /var/lib/apt/lists/*
+# Installation der benötigten Pakete ohne empfohlene Zusatzpakete
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    apache2 \
+    php \
+    libapache2-mod-php \
+    mariadb-server \
+    postgresql \
+    vsftpd \
+    tomcat10 \
+    snort \
+    net-tools \
+    iputils-ping \
+    nano \
+    iptables \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # Apache Konfiguration
 RUN rm -f /var/www/html/index.html
 RUN rm -f /var/www/html/index.php
 
 # PHP Index Seite erstellen
-RUN echo '<?php echo "<h1>Willkommen auf Machine A (10.10.10.10)</h1><p>Dies ist eine unsichere Seite.</p>"; ?>' > /var/www/html/index.php
+RUN echo '<?php echo "<h1>Willkommen auf Machine A (10.10.10.10)</h1><p>Dies ist eine unsichere Seite.</p><p>Credits für diese Docker-Umgebung: <a href=\"https://github.com/strehk/\">Tade Strehk</a></p>"; ?>' > /var/www/html/index.php
 
 # FTP Setup
 RUN useradd -m student && echo "student:secret" | chpasswd
@@ -36,8 +36,9 @@ RUN echo "listen_addresses = '*'" >> /etc/postgresql/16/main/postgresql.conf || 
 RUN echo "host all all 0.0.0.0/0 trust" >> /etc/postgresql/16/main/pg_hba.conf || echo "host all all 0.0.0.0/0 trust" >> /etc/postgresql/*/main/pg_hba.conf
 RUN sed -i 's/bind-address            = 127.0.0.1/bind-address = 0.0.0.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
 
-# --- START SCRIPT GENERIERUNG (Windows-sicher) ---
+# --- START SCRIPT GENERIERUNG ---
 # Wir schreiben den Inhalt direkt in die Datei /start.sh
+# eine externe /start.sh beim Bauen des Containers zu kopieren funktioniert in manchen Umgebungen nicht zuverlässig
 RUN echo '#!/bin/bash\n\
   \n\
   echo "Starte Dienste..."\n\
@@ -62,6 +63,8 @@ RUN echo '#!/bin/bash\n\
 # Ausführbar machen
 RUN chmod +x /start.sh
 
+# Exponierte Ports: HTTP (80), FTP (21), MariaDB (3306), PostgreSQL (5432), Tomcat (8080)
 EXPOSE 80 21 3306 5432 8080
 
+# Standardbefehl zum Ausführen des Startskripts
 CMD ["/start.sh"]

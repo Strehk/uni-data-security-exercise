@@ -1,32 +1,36 @@
 services:
-  machine-a:
+
+# Definition für Maschine A (Server/Opfer)
+  machine-a-server:
     build: ./machine-a
     hostname: machine-a
-    container_name: machine-a
+    container_name: machine-a-server
     cap_add:
       - NET_ADMIN
     networks:
       security_net:
-        # Wir ändern die IP passend zum neuen Subnetz unten
+        # Statische IP-Adresse für Maschine A
         ipv4_address: 10.10.10.10
 
-  machine-b:
+# Definition für Maschine B (Client/Angreifer)
+  machine-b-client:
     build: ./machine-b
     hostname: machine-b
-    container_name: machine-b
+    container_name: machine-b-client
     cap_add:
       - NET_ADMIN
     networks:
       security_net:
-        # Wir ändern die IP passend zum neuen Subnetz unten
+        # Statische IP-Adresse für Maschine B
         ipv4_address: 10.10.10.20
     volumes:
       - ./captures:/captures
 
+# Gemeinsames Netzwerk mit festgelegtem Subnetz
 networks:
   security_net:
     driver: bridge
+    # Subnetzdefinition um IP-Adressen festzulegen
     ipam:
       config:
-        # Hier ändern wir das Subnetz auf etwas, das sicher frei ist
         - subnet: 10.10.10.0/24
