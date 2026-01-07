@@ -2,9 +2,11 @@
 
 Dieses Repository stellt eine alternative, containerbasierte Lösung für die Laboraufgaben "Datenschutz und Datensicherheit" bereit. Anstatt zwei schwere virtuelle Maschinen (VMs) herunterzuladen und zu konfigurieren, werden zwei Docker-Container (`machine-a-server` und `machine-b-client`) in einem isolierten Netzwerk (`10.10.10.0/24`) gestartet.
 
-Dieser Ansatz ist sehr ressourcenschonend und ermöglicht eine schnelle Einrichtung der Laborumgebung. Die Container sind vorkonfiguriert mit den notwendigen Diensten und Tools, um die Aufgaben durchzuführen. Kali-Linux wird hierbei durch ein leichtgewichtiges Debian-basiertes Image ersetzt, das nur die benötigten Penetration-Testing-Tools enthält.
+Dieser Ansatz ist sehr ressourcenschonend und ermöglicht eine schnelle Einrichtung und Erweiterung der Laborumgebung. Die Container sind vorkonfiguriert mit den notwendigen Diensten und Tools, um die Aufgaben durchzuführen. Kali-Linux wird hierbei durch ein leichtgewichtiges Debian-basiertes Image ersetzt, das nur die benötigten Penetration-Testing-Tools enthält.
 
-Der Ansatz ist viel schneller einzurichten und zu betreiben und ebenfalls deutlich einfacher zu erweitern oder anzupassen, als erst zwei ressourcenintensive VMs zu konfigurieren.
+## Known Issues
+
+- **ARM Unterstützung:** Diese Docker-Container sind primär für x86_64 (Intel/AMD) Architekturen gebaut. ARM-basierte Systeme (z.B. Apple M1/M2) werden derzeit (noch) nicht unterstützt. Beiträge zur ARM-Unterstützung sind herzlich willkommen.
 
 ## Architektur
 
@@ -77,8 +79,8 @@ docker exec -it machine-b-client bash
    curl http://10.10.10.10
    ```
 
-4. Beobachten Sie im `iptraf-ng` Fenster die Pakete (Flags, Bytes, TCP-Verbindung).
-5. _Ziel:_ Erstellen Sie einen Screenshot oder Log-Auszug der Verbindung.
+4. Beobachte im `iptraf-ng` Fenster die Pakete (Flags, Bytes, TCP-Verbindung).
+5. _Ziel:_ Erstelle einen Screenshot oder Log-Auszug der Verbindung.
 
 ### Aufgabe 2: HTTP Analyse mit Wireshark/Tshark
 
@@ -190,7 +192,7 @@ docker exec -it machine-b-client bash
 
 ## Tipps und Tricks zum Lösungsweg der Aufgaben (Docker vs. VM)
 
-Da wir keine GUI haben, unterscheidet sich der Workflow minimal von der PDF-Anleitung. Hier sind die Anpassungen für jede Aufgabe:
+Da wir keine GUI haben, unterscheidet sich der Workflow minimal von der originalen Anleitung. Hier sind die Anpassungen für jede Aufgabe:
 
 ### Aufgabe 1: Traffic Sniffing mit `iptraf`
 
