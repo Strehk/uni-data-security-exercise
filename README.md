@@ -45,8 +45,8 @@ Dieser Ansatz ist sehr ressourcenschonend und ermöglicht eine schnelle Einricht
    docker logs machine-a-server # Hier sollten die Info logs des Start-Skripts zu sehen sein
    docker logs machine-b-client # Hier sollte nichts zu sehen sein
    ```
-   > [!NOTE]
-   > Sollte ein Dienst auf Maschine A nicht laufen, kannst du den Container mit `docker restart machine-a-server` neu starten.
+> [!NOTE]
+> Sollte ein Dienst auf Maschine A nicht laufen, kannst du den Container mit `docker restart machine-a-server` neu starten.
 
 ## Verwendung
 
@@ -89,11 +89,11 @@ Da wir in einer Docker-Umgebung ohne GUI arbeiten, nutzen wir `iptraf-ng` direkt
    docker exec -it machine-b-client bash
    curl http://10.10.10.10
    ```
-   > [!NOTE]
-   > Die IP `10.10.10.10` ist die statische IP von Maschine A in unserem Docker-Netzwerk).*
-
 4. Beobachte im ersten Terminal (`iptraf-ng`) die Pakete (Flags, Bytes, TCP-Verbindung).
 5. _Ziel:_ Erstelle einen Screenshot oder Log-Auszug der Verbindung.
+
+> [!NOTE]
+> Die IP `10.10.10.10` ist die statische IP von Maschine A in unserem Docker-Netzwerk).*
 
 ### Aufgabe 2: HTTP Analyse mit Wireshark/Tshark
 
